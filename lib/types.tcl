@@ -25,11 +25,6 @@ proc Node_get_val {node} {
     return [lindex $node 1]
 }
 
-proc Node_get_str {node} {
-    set node [lindex $node 1]
-    return [lindex $node 1]
-}
-
 # --------------------------------
 
 proc List_rest {xs i} {
