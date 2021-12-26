@@ -1,13 +1,6 @@
-#include 
-
-#include ../lib/utils.tcl
-#end_include
-
-#include ../lib/types.tcl
-#end_include
-
-#include ../lib/json.tcl
-#end_include
+source lib/utils.tcl
+source lib/types.tcl
+source lib/json.tcl
 
 proc test_1 {} {
     set data {}

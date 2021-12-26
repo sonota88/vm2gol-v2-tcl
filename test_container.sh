@@ -59,7 +59,7 @@ setup() {
 }
 
 build() {
-  ./preproc.sh
+  :
 }
 
 postproc() {
@@ -72,8 +72,6 @@ postproc() {
     echo "FAILED: ${ERRS}" | sed -e 's/,/\n  /g'
     exit 1
   fi
-
-  ./preproc.sh clean
 }
 
 get_ids() {

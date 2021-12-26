@@ -1,5 +1,4 @@
-#include lib/utils.tcl
-#end_include
+source lib/utils.tcl
 
 proc sym_size {rest} {
     set cc [substring $rest 0 2]

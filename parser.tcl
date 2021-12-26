@@ -1,13 +1,8 @@
 # -*- comment-start: "#" -*-
 
-#include lib/utils.tcl
-#end_include
-
-#include lib/types.tcl
-#end_include
-
-#include lib/json.tcl
-#end_include
+source lib/utils.tcl
+source lib/types.tcl
+source lib/json.tcl
 
 set tokens {}
 set pos 0
