@@ -1,3 +1,5 @@
+#!/usr/bin/tclsh
+
 source lib/utils.tcl
 
 proc sym_size {rest} {
