@@ -1,5 +1,3 @@
-# -*- comment-start: "#" -*-
-
 source lib/utils.tcl
 source lib/types.tcl
 source lib/json.tcl
