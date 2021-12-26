@@ -109,43 +109,47 @@ proc _gen_expr_binary {fn_args lvars expr_node} {
     gen_expr $fn_args $lvars $expr_r
     puts "  push reg_a"
 
-    if {$op == "+"} {
-        _gen_expr_add
-    } elseif {$op == "*"} {
-        _gen_expr_mult
-    } elseif {$op == "=="} {
-        _gen_expr_eq
-    } elseif {$op == "!="} {
-        _gen_expr_neq
-    } else {
-        error [format "_gen_expr_binary: (%s)" $expr_node]
+    switch $op {
+        "+"  { _gen_expr_add  }
+        "*"  { _gen_expr_mult }
+        "==" { _gen_expr_eq   }
+        "!=" { _gen_expr_neq  }
+        default {
+            error [format "_gen_expr_binary: (%s)" $expr_node]
+        }
     }
+
 }
 
 proc gen_expr {fn_args lvars expr_node} {
     set type [Node_get_type $expr_node]
 
-    if {$type == "int"} {
-        set val [Node_get_val $expr_node]
-        puts [format "  cp %d reg_a" $val]
-    } elseif {$type == "str"} {
-        set val [Node_get_val $expr_node]
-        if {0 <= [lsearch $lvars $val]} {
-            set disp [lvar_disp $lvars $val]
-            puts [format "  cp \[bp:%d\] reg_a" $disp]
-        } elseif {0 <= [lsearch $fn_args $val]} {
-            set disp [fn_arg_disp $fn_args $val]
-            puts [format "  cp \[bp:%d\] reg_a" $disp]
-        } else {
-            puts_kv_e fn_args $fn_args
-            puts_kv_e lvars $lvars
-            puts_kv_e val $val
-            error "no such function argument or local varible"
+    switch $type {
+        "int" {
+            set val [Node_get_val $expr_node]
+            puts [format "  cp %d reg_a" $val]
         }
-    } elseif {$type == "list"} {
-        _gen_expr_binary $fn_args $lvars $expr_node
-    } else {
-        error [format "invalid type (%s)" $expr_node]
+        "str" {
+            set val [Node_get_val $expr_node]
+            if {0 <= [lsearch $lvars $val]} {
+                set disp [lvar_disp $lvars $val]
+                puts [format "  cp \[bp:%d\] reg_a" $disp]
+            } elseif {0 <= [lsearch $fn_args $val]} {
+                set disp [fn_arg_disp $fn_args $val]
+                puts [format "  cp \[bp:%d\] reg_a" $disp]
+            } else {
+                puts_kv_e fn_args $fn_args
+                puts_kv_e lvars $lvars
+                puts_kv_e val $val
+                error "no such function argument or local varible"
+            }
+        }
+        "list" {
+            _gen_expr_binary $fn_args $lvars $expr_node
+        }
+        default {
+            error [format "invalid type (%s)" $expr_node]
+        }
     }
 }
 
@@ -271,25 +275,19 @@ proc gen_debug {} {
 proc gen_stmt {fn_args lvars stmt} {
     set stmt_head [head_val $stmt]
 
-    if {$stmt_head == "set"} {
-        gen_set $fn_args $lvars $stmt
-    } elseif {$stmt_head == "call"} {
-        gen_call $fn_args $lvars $stmt
-    } elseif {$stmt_head == "call_set"} {
-        gen_call_set $fn_args $lvars $stmt
-    } elseif {$stmt_head == "return"} {
-        gen_return $fn_args $lvars $stmt
-    } elseif {$stmt_head == "while"} {
-        gen_while $fn_args $lvars $stmt
-    } elseif {$stmt_head == "case"} {
-        gen_case $fn_args $lvars $stmt
-    } elseif {$stmt_head == "_cmt"} {
-        gen_vm_comment $stmt
-    } elseif {$stmt_head == "_debug"} {
-        gen_debug
-    } else {
-        puts_kv_e stmt $stmt
-        error [format "gen_stmts: unsupported statement (%s)" $stmt_head]
+    switch $stmt_head {
+        "set"      { gen_set      $fn_args $lvars $stmt }
+        "call"     { gen_call     $fn_args $lvars $stmt }
+        "call_set" { gen_call_set $fn_args $lvars $stmt }
+        "return"   { gen_return   $fn_args $lvars $stmt }
+        "while"    { gen_while    $fn_args $lvars $stmt }
+        "case"     { gen_case     $fn_args $lvars $stmt }
+        "_cmt"     { gen_vm_comment $stmt }
+        "_debug"   { gen_debug }
+        default {
+            puts_kv_e stmt $stmt
+            error [format "gen_stmts: unsupported statement (%s)" $stmt_head]
+        }
     }
 }
 

@@ -74,21 +74,26 @@ proc _parse_expr_factor {} {
     set t [peek 0]
     set kind [Token_get_kind $t]
 
-    if {$kind == "int"} {
-        incr_pos
-        set val [Token_get_val $t]
-        return [Node_new_int $val]
-    } elseif {$kind == "ident"} {
-        incr_pos
-        set val [Token_get_val $t]
-        return [Node_new_str $val]
-    } elseif {$kind == "sym"} {
-        consume "("
-        set expr_node [parse_expr]
-        consume ")"
-        return $expr_node
-    } else {
-        error [format "parse_expr: unsupported kind (%s)" $t]
+    switch $kind {
+        "int" {
+            incr_pos
+            set val [Token_get_val $t]
+            return [Node_new_int $val]
+        }
+        "ident" {
+            incr_pos
+            set val [Token_get_val $t]
+            return [Node_new_str $val]
+        }
+        "sym" {
+            consume "("
+            set expr_node [parse_expr]
+            consume ")"
+            return $expr_node
+        }
+        default {
+            error [format "parse_expr: unsupported kind (%s)" $t]
+        }
     }
 }
 
@@ -329,24 +334,18 @@ proc parse_stmt {} {
     set t [peek 0]
     set val [peek_val 0]
 
-    if {$val == "set"} {
-        parse_set
-    } elseif {$val == "call"} {
-        parse_call
-    } elseif {$val == "call_set"} {
-        parse_call_set
-    } elseif {$val == "return"} {
-        parse_return
-    } elseif {$val == "while"} {
-        parse_while
-    } elseif {$val == "case"} {
-        parse_case
-    } elseif {$val == "_cmt"} {
-        parse_vm_comment
-    } elseif {$val == "_debug"} {
-        parse_debug
-    } else {
-        error [format "parse_stmt: unsupported stmt (%s)" $t]
+    switch $val {
+        "set"      { parse_set        }
+        "call"     { parse_call       }
+        "call_set" { parse_call_set   }
+        "return"   { parse_return     }
+        "while"    { parse_while      }
+        "case"     { parse_case       }
+        "_cmt"     { parse_vm_comment }
+        "_debug"   { parse_debug      }
+        default {
+            error [format "parse_stmt: unsupported stmt (%s)" $t]
+        }
     }
 }
 
