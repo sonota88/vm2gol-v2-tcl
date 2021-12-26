@@ -2,7 +2,6 @@
 #end_include
 
 proc sym_size {rest} {
-    set c [substring $rest 0 1]
     set cc [substring $rest 0 2]
 
     if {
@@ -10,7 +9,10 @@ proc sym_size {rest} {
         || $cc == "!="
     } {
         return 2
-    } elseif {
+    }
+
+    set c [substring $rest 0 1]
+    if {
         $c == "("
         || $c == ")"
         || $c == "\{"
@@ -22,9 +24,9 @@ proc sym_size {rest} {
         || $c == "*"
     } {
         return 1
-    } else {
-        return 0
     }
+
+    return 0
 }
 
 proc is_kw {s} {
