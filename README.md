@@ -1,3 +1,6 @@
+Tclでかんたんな自作言語のコンパイラを書いた  
+https://qiita.com/sonota88/items/988d9cb4ba2077c49d64
+
 ```
 $ echo 'puts $tcl_version' | tclsh
 8.6
@@ -17,11 +20,11 @@ docker build \
 
 ```
 wc -l *.tcl lib/*.tcl
-  388 codegen.tcl
-  126 lexer.tcl
-  444 parser.tcl
+  381 codegen.tcl
+  129 lexer.tcl
+  438 parser.tcl
   109 lib/json.tcl
-   47 lib/types.tcl
+   42 lib/types.tcl
    92 lib/utils.tcl
- 1206 total
+ 1191 total
 ```
